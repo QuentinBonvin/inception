@@ -16,3 +16,12 @@ RUN chmod +x wp-cli.phar
 
 RUN mv wp-cli.phar /usr/local/bin/wp
 
+
+COPY conf/auto_config.sh /
+
+COPY conf/www.conf /etc/php/7.3/fpm/pool.d/
+
+COPY conf/wp-config.php /var/www/wordpress/wp-config.php
+
+CMD ["bash", "auto_config.sh"]
+

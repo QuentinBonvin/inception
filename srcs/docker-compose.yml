@@ -1,47 +1,104 @@
-version: '3'
+# version: '3'
+
+# services:
+#    nginx:
+#       container_name: nginx
+#       build: ./requirements/nginx
+#       volumes:
+#          - wordpress:/var/www/wordpress
+#       depends_on:
+#          - wordpress
+#       ports:
+#          - "443:433"
+#       networks:
+#          - inception
+#       restart: on-failure
+
+#    mariadb:
+#       container_name: mariadb
+#       build: ./requirements/mariadb
+#       env_file: 
+#          - .env
+#       volumes:
+#          - mariadb:/var/lib/mysql
+#       restart: unless-stopped
+#       networks:
+#          - inception
+#       expose:
+#          - "3306"
+
+#    wordpress:
+#       container_name: wordpress
+#       build: ./requirements/wordpress
+#       env_file: 
+#          - .env
+#       depends_on:
+#          - mariadb
+#       volumes:
+#          - wordpress:/var/www/wordpress
+#       networks:
+#          - inception
+#       expose:
+#          - "9000"
+#       restart: on-failure
+
+# volumes:
+#    wordpress:
+#       driver: local
+#    mariadb: 
+#       driver: local
+
+# networks:
+#    inception:
+
+version: "3"
 
 services:
- mariadb:
-  container_name: mariadb
-  networks:
-   - inception
-  build: ./requirements/mariadb
-  env_file: .env
-  volumes:
-   - mariadb:/var/lib/mysql
-  restart: unsless-stopped
-  expose:
-   - "3306"
- nginx:
-  container_name: nginx
-  volumes:
-   - wordpress:/var/www/wordpress
-  networks:
-   - inception
-  depends_on:
-   - wordpress
-  build: ./requirements/nginx
-  env_file: .env
-  ports:
-   - "443:433"
-  restart: on-failure
- wordpress:
-  container_name: wordpress
-  env_file: .env
-  volumes:
-   - wordpress:/var/www/wordpress
-  networks:
-   - inception
-  build: ./requirements/wordpress
-  depends_on:
-   - mariadb
-  restart: on-failure
-  expose:
-   - "9000"
+  nginx:
+    container_name: nginx
+    build: ./requirements/nginx
+    volumes:
+      - wordpress:/var/www/wordpress
+    depends_on:
+      - wordpress
+    ports:
+      - "443:443"
+    networks:
+      - wp
+    restart: on-failure
+
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb
+    volumes:
+      - mariadb:/var/lib/mysql
+    expose:
+      - "3306"
+    networks:
+      - wp
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  wordpress:
+    container_name: wordpress
+    build: ./requirements/wordpress
+    env_file: .env
+    depends_on:
+      - mariadb
+    volumes:
+      - wordpress:/var/www/wordpress
+    networks:
+      - wp
+    expose:
+      - "9000"
+    restart: always
+
 volumes:
-   wordpress:
+  wordpress:
     driver: local
-   mariadb: 
+  mariadb:
     driver: local
+
 networks:
- inception:
+  wp:
