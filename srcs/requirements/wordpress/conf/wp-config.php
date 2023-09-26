@@ -30,7 +30,7 @@ define( 'DB_USER', getenv('SQL_USER') );
 define( 'DB_PASSWORD', getenv('SQL_PWD') );
 
 /** MySQL hostname */
-define( 'DB_HOST', getenv('WP_DB_HOST') );
+define( 'DB_HOST', getenv('SQL_DB') );
 
 /** Database charset to use in creating database tables. */
 define( 'DB_CHARSET', 'utf8' );

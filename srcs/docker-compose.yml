@@ -1,77 +1,24 @@
-# version: '3'
+version: "3.7"
+services: 
 
-# services:
-#    nginx:
-#       container_name: nginx
-#       build: ./requirements/nginx
-#       volumes:
-#          - wordpress:/var/www/wordpress
-#       depends_on:
-#          - wordpress
-#       ports:
-#          - "443:433"
-#       networks:
-#          - inception
-#       restart: on-failure
-
-#    mariadb:
-#       container_name: mariadb
-#       build: ./requirements/mariadb
-#       env_file: 
-#          - .env
-#       volumes:
-#          - mariadb:/var/lib/mysql
-#       restart: unless-stopped
-#       networks:
-#          - inception
-#       expose:
-#          - "3306"
-
-#    wordpress:
-#       container_name: wordpress
-#       build: ./requirements/wordpress
-#       env_file: 
-#          - .env
-#       depends_on:
-#          - mariadb
-#       volumes:
-#          - wordpress:/var/www/wordpress
-#       networks:
-#          - inception
-#       expose:
-#          - "9000"
-#       restart: on-failure
-
-# volumes:
-#    wordpress:
-#       driver: local
-#    mariadb: 
-#       driver: local
-
-# networks:
-#    inception:
-
-version: "3"
-
-services:
   nginx:
     container_name: nginx
-    build: ./requirements/nginx
+    build: requirements/nginx
     volumes:
-      - wordpress:/var/www/wordpress
+      - wordpress_volume:/var/www/wordpress 
     depends_on:
       - wordpress
     ports:
-      - "443:443"
+      - "433:433"
     networks:
       - wp
     restart: on-failure
-
+  
   mariadb:
     container_name: mariadb
-    build: ./requirements/mariadb
+    build: requirements/mariadb
     volumes:
-      - mariadb:/var/lib/mysql
+      - mariadb_volume:/var/lib/mysql
     expose:
       - "3306"
     networks:
@@ -82,23 +29,32 @@ services:
 
   wordpress:
     container_name: wordpress
-    build: ./requirements/wordpress
-    env_file: .env
-    depends_on:
+    build: requirements/wordpress
+    env_file:
+      - .env
+    depends_on: 
       - mariadb
-    volumes:
-      - wordpress:/var/www/wordpress
     networks:
       - wp
     expose:
       - "9000"
+    volumes:
+      - wordpress_volume:/var/www/wordpress
     restart: always
-
-volumes:
-  wordpress:
-    driver: local
-  mariadb:
-    driver: local
 
 networks:
   wp:
+
+volumes: 
+  wordpress_volume:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/${LOGIN}/data/wordpress_volume
+      o: bind
+  mariadb_volume: 
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/${LOGIN}/data/mariadb_volume
+      o: bind
